@@ -51,17 +51,40 @@ Handles errors as per: [hcx-protocol | error-descriptions](https://docs.hcxproto
 `ERR_DOMAIN_PROCESSING`.
 
 ### Create a Header for the payload
-```py
-def create_headers(senderCode: str, recipientCode: str, apiCallId: str, correlationId: str, actionJwe: str, onActionStatus: str, headers: dict, error: dict):
-    """Parameters
-    ---
 
+Headers vary based upon the type of outgoing request call.
+* For `action` headers we only need the `recipientCode`.
+* For `on_action` type, the jwe payload recieved from incoming request is provided as `actionJwe`. 
+
+```py
+def create_headers(senderCode: str, recipientCode: str, apiCallId: str, correlationId: str, actionJwe: str, onActionStatus: str):
+    """
+    Parameters
+    ----------
+    senderCode: str
+        Unique HCX sender code from registries
+    recipientCode: str
+        Unique HCX recipient code from registries
+    apiCallID: str 
+        Unique id for each request
+    correlationId: str (optional)
+        Unique id for each cycle, this is generated if empty & later passed to allother callbacks as a custom identifier.
+    actionJwe: str (optional)
+        The jwe payload recieved from incoming request. Required for `on_action` headers.
+    onActionStatus: str (required)
+        Hcx protocol header status, (x-hcx_status in registry).
+    
+    Returns
+    -------
+    header: dict
+        On success, The HCX protocol header to create JWE Payload
+    error: dict
+        On failure, error in creation of header.
     """
     return Json
 ```
-* Creates header. Only the recipient code needs to be provided. Rest parameters are set on the creation of the HCXIntegrator instance.
-* It returns a JSON object (header).
-* For creating action headers JWE payload received for the action call should be provided
+`create_headers` only the recipient code needs to be provided. Rest parameters are set on the creation of the HCXIntegrator instance.
+
 
 ### Encrypt Payload
 ```py
