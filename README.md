@@ -89,8 +89,22 @@ def create_headers(senderCode: str, recipientCode: str, apiCallId: str, correlat
 ### Encrypt Payload
 ```py
 def encrypt_payload(headers: dict, fhirpayload: str):
+    """
+    Parameters
+    ----------
+    headers: dict
+        HCX headers from createHeaders method.
+    fhirPayload: str
+        FHIR object to be encrypted.
+    
+    Returns
+    -------
+    enc: str
+        Encrypted JWE payload.
+    """
     # find public certificate from the searchRegistry method
-    # encrypt payload using public certificate
+    # encrypt payload using public certificate of the recipient
+    # (public certificate of the recipient can be find )
     # Returns a JWE (json) object with encrypted fields
     return JWE
 ```
@@ -112,7 +126,7 @@ def searchRegistry(searchField: str, searchValue: str):
 ### Initialize HCX Call
 
 ```py
-def initializeHCXCall(jewPayload: str, operation: Operation):
+def initializeHCXCall(jwePayload: str, operation: Operation):
     return response
 ```
 
@@ -127,7 +141,15 @@ This function does the following:
 def generate(fhirPayload, operation, recipientCode):
     return output
 ```
-* output is of type `dict`. It can be of wither of the following cases:
+
+2. For `on_action` API request:
+
+```py
+def generate(fhirPayload, operation, recipientCode, apiCallId,
+             correlationId, actionJwe, onActionStatus, domainHeaders):
+    return output
+```
+* Output is of type `dict`. It can be of wither of the following cases:
     1. On Success: success output- 
     ```json
     {
@@ -153,7 +175,6 @@ def generate(fhirPayload, operation, recipientCode):
        }
     }
     ```
-
 
 
 ## Incoming Methods
