@@ -1,19 +1,19 @@
 # Python Integrator SDK
 
-> What is the HCX SDK?
+What is the HCX SDK?
 
-HCX SDK is a bridge/switch between provider and payor, it validates request from provider to payor & allows payor to respond back to the provider.
+HCX SDK is a bridge/switch between the provider and the payor. It validates requests from the provider to the payor & allows the payor to respond back to the provider.
 
-> Steps
+### Summary
 
 1. Initialzation of the SDK: Initilaize the `HCXIntegrator` class
 2. Outgoing Requests: There are two types of outgoing requests
 ```mermaid
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
+flowchart TD;
+OutgoingRequest-->action;
+OutgoingRequest-->on_action;
+action--> id1(New/Initial Request);
+on_action--> id2(Response to an incoming HCX);
 ```
 
 ## Initiating the SDK
