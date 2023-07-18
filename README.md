@@ -43,6 +43,9 @@ As a sender, the steps are following:
 
 ```py
 def validatePayload(jwePayload : str, operation: Operation, error: dict):
+    """
+    jwePayload: FHIR Payload in json format
+    """
     returns bool
 ```
 Handles errors as per: [hcx-protocol | error-descriptions](https://docs.hcxprotocol.io/hcx-technical-specifications/open-protocol/key-components-building-blocks/error-descriptions) while excluding the following error messages:
