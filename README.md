@@ -16,7 +16,9 @@ action--> id1(New/Initial Request);
 on_action--> id2(Response to an incoming HCX);
 ```
 3. Only the header changes incase of on_action callback, The input request JWE should be used as `actionJwe`.
-4. Next step is to validate FHIR Request -> Create Header -> Encrypt Payload.
+4. Next step is to validate FHIR Request -> Create Header -> Encrypt Payload (these methods are explained below in detail).
+5. Once the payload is encrypted, It is sent to the Payor via HCX Instance (payor endpoint URL can be found at `registry->endpoint_url`)
+6. Incoming request
 
 ## Initiating the SDK
 Python class: `HCXIntegrator()`
@@ -104,7 +106,7 @@ def encrypt_payload(headers: dict, fhirpayload: str):
     """
     # find public certificate from the searchRegistry method
     # encrypt payload using public certificate of the recipient
-    # (public certificate of the recipient can be find )
+    # (public certificate of the recipient is used so that the recipient can decrypt it using his private key)
     # Returns a JWE (json) object with encrypted fields
     return JWE
 ```
@@ -151,26 +153,26 @@ def generate(fhirPayload, operation, recipientCode, apiCallId,
 ```
 * Output is of type `dict`. It can be of wither of the following cases:
     1. On Success: success output- 
-    ```json
+    ```py
     {
-        "payload":{}, -  jwe payload
+        "payload":{}, # jwe payload
         "responseObj": {
-         "timestamp": , - unix timestamp
-         "correlation_id": "", - fetched from incoming request
-         "api_call_id": "" - fetched from incoming request
+         "timestamp": , # unix timestamp
+         "correlation_id": "", # fetched from incoming request
+         "api_call_id": "" # fetched from incoming request
         }
     }
     ```
     2. error output-
-    ```json
+    ```py
     {
-        "payload":{}, -  jwe payload
+        "payload":{}, # jwe payload
         "responseObj":{
-         "timestamp": , - unix timestamp
+         "timestamp": , # unix timestamp
          "error": {
-           "code" : "", - error code
-           "message": "", - error message
-           "trace":"" - error trace
+           "code" : "", # error code
+           "message": "", # error message
+           "trace":"" # error trace (what is error trace)
          }
        }
     }
@@ -178,6 +180,8 @@ def generate(fhirPayload, operation, recipientCode, apiCallId,
 
 
 ## Incoming Methods
+
+Processes incoming request, decrypts the payload & extracts the FHIR object.
 
 ### Protocol Validations
 ```py
