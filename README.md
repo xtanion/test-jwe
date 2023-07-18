@@ -42,9 +42,9 @@ As a sender, the steps are following:
 ### Validating FHIR request
 
 ```py
-def validatePayload(jwePayload : str, operation: Operation, error: dict):
+def validatePayload(fhirPayload : str, operation: Operation, error: dict):
     """
-    jwePayload: FHIR Payload in json format
+    fhirPayload: FHIR Payload in json format
     """
     returns bool
 ```
@@ -66,17 +66,17 @@ def create_headers(senderCode: str, recipientCode: str, apiCallId: str, correlat
     """
     Parameters
     ----------
-    senderCode: str
+    senderCode: str (given)
         Unique HCX sender code from registries
     recipientCode: str
         Unique HCX recipient code from registries
-    apiCallID: str 
+    apiCallID: str (optional)
         Unique id for each request
     correlationId: str (optional)
         Unique id for each cycle, this is generated if empty & later passed to allother callbacks as a custom identifier.
     actionJwe: str (optional)
         The jwe payload recieved from incoming request. Required for `on_action` headers.
-    onActionStatus: str (required)
+    onActionStatus: str (optional)
         Hcx protocol header status, (x-hcx_status in registry).
     
     Returns
@@ -188,6 +188,7 @@ def generate(fhirPayload, operation, recipientCode, apiCallId,
 Processes incoming request, decrypts the payload & extracts the FHIR object.
 
 ### Protocol Validations
+Only incoming header is validated, and exceptions are thrown.
 ```py
 def validateRequest(jwePayload: str, operations: Operation, error: dict):
     returns bool
